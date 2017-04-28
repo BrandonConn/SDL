@@ -100,16 +100,26 @@ int main(int argc, char* args[]) {
 
     // Set up vertex data (and buffer(s)) and attribute pointers
     GLfloat vertices[] = {
-        -0.5f, -0.5f, 0.0f, // Left
-         0.5f, -0.5f, 0.0f, // Right
-         0.0f,  0.5f, 0.0f  // Top
+         0.5f,  0.5f, 0.0f,  // Top Right
+         0.5f, -0.5f, 0.0f,  // Bottom Right
+        -0.5f, -0.5f, 0.0f,  // Bottom Left
+        -0.5f,  0.5f, 0.0f   // Top Left
+    };
+    GLuint indices[] = {  // Note that we start from 0!
+        0, 1, 3,   // First Triangle
+        1, 2, 3    // Second Triangle
     };
 
-    GLuint VBO, VAO;
+
+    GLuint VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     // Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
     glBindVertexArray(VAO);
+
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -129,11 +139,22 @@ int main(int argc, char* args[]) {
         // Draw our first triangle
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         if (SDL_PollEvent(&windowEvent)) {
             if (windowEvent.type == SDL_QUIT) break;
+            else if (windowEvent.type == SDL_KEYDOWN) {
+                if  (windowEvent.key.keysym.sym == SDLK_ESCAPE) break;
+                switch ( windowEvent.key.keysym.sym ) {
+                    case SDLK_q:
+                        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                        break;
+                    case SDLK_w:
+                        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                        break;
+                }
+            }
         }
         SDL_GL_SwapWindow(window);
     }
