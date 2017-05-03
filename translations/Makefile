@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = vertex_attributes.cpp
+OBJS = translations.cpp
 
 #CC specifies which compiler we're using
 CC = g++-5
@@ -12,7 +12,7 @@ COMPILER_FLAGS = -w -std=c++1y
 LINKER_FLAGS = -lSDL2 -lGL -lGLEW -lSOIL
 
 #OBJ_NAME specifies the name of our exectuable
-OBJ_NAME = shader
+OBJ_NAME = translate
 
 #This is the target that compiles our executable
 all : $(OBJS)
